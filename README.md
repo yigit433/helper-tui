@@ -1,5 +1,6 @@
 # Helper CLI
-A cli prepared with TUI that facilitates your operations.
+- A cli prepared with TUI that facilitates your operations.
+- **⚠️  Note:** For linux only.
 
 ## Installation steps
 * `git clone https://github.com/SherlockYigit/helper-cli`

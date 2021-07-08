@@ -1,7 +1,6 @@
 extern crate cursive;
 use cursive::{
   Cursive,
-  default,
   align::HAlign,
   event::EventResult,
   traits::*,
@@ -57,7 +56,7 @@ fn start_processing(siv: &mut Cursive, process_name: &str) {
         .button("Quit", |s| s.quit())
       );
     } else {
-      if let Err(_err) = fs::create_dir(trash_directory) {
+      if let Err(_err) = fs::create_dir(&trash_directory) {
         siv.add_layer(
           Dialog::around(TextView::new("Could not create Trash directory!"))
           .button("Quit", |s| s.quit())
