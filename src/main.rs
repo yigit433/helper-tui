@@ -1,4 +1,3 @@
-extern crate cursive;
 use cursive::{
   Cursive,
   align::HAlign,
@@ -6,14 +5,24 @@ use cursive::{
   traits::*,
   views::{Dialog, OnEventView, SelectView, TextView}
 };
-use std::{env,fs};
+use std::{
+  env,
+  fs,
+  process::{
+    Command
+  },
+  str::{
+    from_utf8
+  }
+};
 
 fn main() {
   let mut select = SelectView::new()
   .h_align(HAlign::Center)
   .autojump();  
 
-  select.add_item("Clean computer", "clean_computer");
+  select.add_item("Clean the Trash", "clean_the_trash");
+  select.add_item("Connect wifi", "connect_wifi");
 
   select.set_on_submit(start_processing);
 
@@ -41,7 +50,7 @@ fn main() {
 fn start_processing(siv: &mut Cursive, process_name: &str) {
   siv.pop_layer();
   
-  if process_name == "clean_computer" {
+  if process_name == "clean_the_trash" {
     let trash_directory = "/home/".to_owned() + env!("USER") + "/.local/share/Trash/";
     let cache_directory = "/home/".to_owned() + env!("USER") + "/.cache";
 
@@ -68,5 +77,51 @@ fn start_processing(siv: &mut Cursive, process_name: &str) {
         );
       }
     } 
+  } else if process_name == "connect_wifi" {
+    // nmcli --get-values ssid,security,signal device wifi
+    let mut output = Command::new("nmcli");
+    output.args(&["--get-values=ssid,security,bars", "device", "wifi", "list"]);
+  
+    let parsed = from_utf8(&output.output().expect("fail").stdout).unwrap().to_string();
+
+    if parsed == "fail" {
+      siv.add_layer(
+        Dialog::around(TextView::new("An error has been encountered! nmcli not found!"))
+        .button("Quit", |s| s.quit())
+      );  
+    } else {
+      let networks = parsed.split("\n").filter(|e| !e.is_empty());
+    
+      let mut select = SelectView::new()
+      .h_align(HAlign::Center)
+      .autojump();
+      
+      select.add_all_str(networks);
+      select.set_on_submit(|siv: &mut Cursive, _connection_name: &str| {
+        siv.pop_layer();
+        let parsed_connection_name = &_connection_name.split(":").into_iter().collect::<Vec<&str>>();
+         
+        siv.add_layer(
+          Dialog::around(TextView::new(format!("{:?}", parsed_connection_name)))
+          .button("Quit", |s| s.quit())
+        );        
+      });
+
+      let select = OnEventView::new(select)
+      .on_pre_event_inner('k', |s, _| {
+        let cb = s.select_up(1);
+        Some(EventResult::Consumed(Some(cb)))
+      })
+      .on_pre_event_inner('j', |s, _| {
+        let cb = s.select_down(1);
+        Some(EventResult::Consumed(Some(cb)))
+      });
+
+      siv.add_layer(
+        Dialog::around(select.scrollable().fixed_size((40, 100)))
+        .title("Select network")
+        .button("Quit", |s| s.quit())
+      );
+    }
   }
 }
