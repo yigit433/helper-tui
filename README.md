@@ -11,5 +11,5 @@ A cli prepared with TUI that facilitates your operations.
 ![screenshot](/demo/app_image.png)
 
 ### Features
-- [x] Computer cleaner
+- [x] Trash cleaner
 - [ ] An interface that makes it practical when we use nmcli to connect to the internet.
