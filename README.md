@@ -1,15 +1,15 @@
-# Helper CLI
-- A cli prepared with TUI that facilitates your operations.
-- **⚠️  Note:** For linux only.
+# ⚠️  For linux only ⚠️ 
 
-## Installation steps
-* `git clone https://github.com/SherlockYigit/helper-cli`
-* You need to install [rust](https://rust-lang.org/) to run the project.
-* `cargo build && ./target/debug/helper-cli`
+## Helper CLI
+A cli prepared with TUI that facilitates your operations.
+### Installation steps
+- `git clone https://github.com/SherlockYigit/helper-cli`
+- You need to install [rust](https://rust-lang.org/) to run the project.
+- `cargo build && ./target/debug/helper-cli`
 
-## Images
+### Images
 ![screenshot](/demo/app_image.png)
 
-## Features
+### Features
 - [x] Computer cleaner
-- [ ] An interface that makes it practical when we use nmcli to connect to the internet.
+- [] An interface that makes it practical when we use nmcli to connect to the internet.
