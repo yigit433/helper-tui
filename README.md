@@ -1,7 +1,7 @@
 # ⚠️  For linux only ⚠️ 
 
 ## Helper CLI
-A cli prepared with TUI that facilitates your operations.
+A cli prepared with TUI that facilitates your operations. [Click me](https://docs.rs/cursive/0.16.3/cursive/theme/index.html) to learn more about the theme system.
 ### Installation steps
 - `git clone https://github.com/SherlockYigit/helper-cli`
 - You need to install [rust](https://rust-lang.org/) to run the project.

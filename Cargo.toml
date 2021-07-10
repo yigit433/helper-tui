@@ -6,4 +6,4 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-cursive = "0.16"
+cursive = { version = "0.16", features = ["toml"] }

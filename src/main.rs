@@ -37,6 +37,8 @@ fn main() {
   });
 
   let mut siv = cursive::default();
+  
+  siv.load_toml(include_str!("theme-config.toml")).unwrap();
 
   siv.add_layer(
     Dialog::around(select.scrollable().fixed_size((20, 10)))
