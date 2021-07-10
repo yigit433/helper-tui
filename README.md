@@ -12,4 +12,4 @@ A cli prepared with TUI that facilitates your operations. [Click me](https://doc
 
 ### Features
 - [x] Trash cleaner
-- [ ] An interface that makes it practical when we use nmcli to connect to the internet.
+- [x] An interface that makes it practical when we use nmcli to connect to the internet.

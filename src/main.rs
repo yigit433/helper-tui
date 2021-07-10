@@ -3,7 +3,7 @@ use cursive::{
   align::HAlign,
   event::EventResult,
   traits::*,
-  views::{Dialog, OnEventView, SelectView, TextView}
+  views::{Dialog, OnEventView, SelectView, TextView, EditView}
 };
 use std::{
   env,
@@ -99,14 +99,56 @@ fn start_processing(siv: &mut Cursive, process_name: &str) {
       .autojump();
       
       select.add_all_str(networks);
-      select.set_on_submit(|siv: &mut Cursive, _connection_name: &str| {
+      select.set_on_submit(|siv: &mut Cursive, _connection: &str| {
         siv.pop_layer();
-        let parsed_connection_name = &_connection_name.split(":").into_iter().collect::<Vec<&str>>();
+        let parsed_connection = &_connection.split(":").into_iter().collect::<Vec<&str>>();
          
-        siv.add_layer(
-          Dialog::around(TextView::new(format!("{:?}", parsed_connection_name)))
-          .button("Quit", |s| s.quit())
-        );        
+	if parsed_connection[1].is_empty() {
+          let network_name = parsed_connection[0].to_string();
+          let mut connection_output = Command::new("nmcli");
+          connection_output.args(&["device", "wifi", "connect", &network_name]);
+          let connection_parsed = from_utf8(&connection_output.output().expect("fail").stdout).unwrap().to_string();
+
+          if connection_parsed == "fail" {
+            siv.add_layer(
+              Dialog::around(TextView::new("Fail!"))
+              .button("Quit", |s| s.quit())
+            );
+          } else {
+            siv.add_layer(
+              Dialog::around(TextView::new("Connection established"))
+              .button("Quit", |s| s.quit())
+            );
+          } 
+	} else {
+          let network_name = parsed_connection[0].to_string();
+
+	  siv.add_layer(
+            Dialog::new()
+	    .title(format!("{} | Enter your network password", parsed_connection[0]))
+            .padding_lrtb(1, 1, 1, 0)
+            .content(
+	      EditView::new()
+              .on_submit(connect_wifi)
+              .with_name("edit")
+              .min_width(10)
+	    )
+            .button("Ok", move |btn| {
+              let password = btn
+	      .call_on_name("edit", |view: &mut EditView| {
+                view.get_content()
+              })
+              .unwrap();
+
+              let mut connection_output = Command::new("nmcli");
+              connection_output.args(&["device", "wifi", "connect", &network_name, "password", &password]);
+              let connection_parsed = from_utf8(&connection_output.output().expect("fail").stdout).unwrap().to_string();
+	       
+	      connect_wifi(btn, &connection_parsed);
+	    })
+	    .dismiss_button("Cancel")
+	  );
+	}
       });
 
       let select = OnEventView::new(select)
@@ -125,5 +167,21 @@ fn start_processing(siv: &mut Cursive, process_name: &str) {
         .button("Quit", |s| s.quit())
       );
     }
+  }
+}
+
+fn connect_wifi(siv: &mut Cursive, output: &str) {
+  siv.pop_layer();
+
+  if output == "fail" {
+    siv.add_layer(
+      Dialog::around(TextView::new("Fail!"))
+      .button("Quit", |s| s.quit())
+    );
+  } else {
+    siv.add_layer(
+      Dialog::around(TextView::new("Connection established"))
+      .button("Quit", |s| s.quit())
+    );
   }
 }
